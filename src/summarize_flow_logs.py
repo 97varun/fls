@@ -1,14 +1,20 @@
 import argparse
+import os
 
 from file_handler import writeStats
 from flow_logs_summarizer import FlowLogsSummarizer
+from flow_log_constants import INPUT_DIR, OUTPUT_DIR
+
 
 def handleOutput(flowLogSummarizer: FlowLogsSummarizer, args):
+    protocolPortMatchesSummaryFile = os.path.join(OUTPUT_DIR, args.protocol_port_matches_summary_file)
+    tagMatchesSummaryFile = os.path.join(OUTPUT_DIR, args.tag_matches_summary_file)
+
     matchesByProtocolByPort = flowLogSummarizer.getMatchesByProtocolByPort()
-    writeStats(matchesByProtocolByPort, args.protocol_port_matches_summary_file)
+    writeStats(matchesByProtocolByPort, protocolPortMatchesSummaryFile)
 
     matchesByTag = flowLogSummarizer.getMatchesByTag()
-    writeStats(matchesByTag, args.tag_matches_summary_file)
+    writeStats(matchesByTag, tagMatchesSummaryFile)
 
 def main():
     argsParser = argparse.ArgumentParser(description='Parse VPC Flow Logs.')
@@ -19,8 +25,11 @@ def main():
 
     args = argsParser.parse_args()
 
-    flowLogSummarizer = FlowLogsSummarizer(args.tag_lookup_file)
-    flowLogSummarizer.processFlowLogFile(args.flow_log_file)
+    tagLookupFile = os.path.join(INPUT_DIR, args.tag_lookup_file)
+    flowLogFile = os.path.join(INPUT_DIR, args.flow_log_file)
+
+    flowLogSummarizer = FlowLogsSummarizer(tagLookupFile)
+    flowLogSummarizer.processFlowLogFile(flowLogFile)
 
     handleOutput(flowLogSummarizer, args)
 

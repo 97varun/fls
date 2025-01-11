@@ -10,3 +10,6 @@ class LookupTableFields:
     PROTOCOL = 'protocol'
     DSTPORT = 'dstport'
     TAG = 'tag'
+
+INPUT_DIR = 'data/input'
+OUTPUT_DIR = 'data/output'
